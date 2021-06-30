@@ -1,5 +1,5 @@
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (hero.isHittingTile(CollisionDirection.Bottom)) {
+    if (hero.isHittingTile(CollisionDirection.Bottom) || hero.isHittingTile(CollisionDirection.Right) || hero.isHittingTile(CollisionDirection.Left)) {
         hero.vy = -200
     }
 })
@@ -8,6 +8,9 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     hero.setImage(rightFacingImg)
+})
+scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.chestOpen, function (sprite, location) {
+    game.over(true)
 })
 let hero: Sprite = null
 let leftFacingImg: Image = null
@@ -90,10 +93,23 @@ tiles.setTilemap(tilemap`level1`)
 scene.cameraFollowSprite(hero)
 tiles.placeOnTile(hero, tiles.getTileLocation(14, 30))
 hero.ay = 350
-game.onUpdateInterval(500, function () {
-    if (hero.isHittingTile(CollisionDirection.Right)) {
+game.onUpdate(function () {
+    if (hero.isHittingTile(CollisionDirection.Right) && hero.vy > 0) {
         hero.ay = 0
         hero.vy = 15
         hero.setImage(rightSwordOutImg)
+    }
+    if (hero.isHittingTile(CollisionDirection.Left) && hero.vy > 0) {
+        hero.ay = 0
+        hero.vy = 15
+        hero.setImage(leftSwordOutImg)
+    } else {
+        hero.ay = 350
+        if (hero.image == leftSwordOutImg) {
+            hero.setImage(leftSwordOutImg)
+        }
+        if (hero.image == rightSwordOutImg) {
+            hero.setImage(rightSwordOutImg)
+        }
     }
 })
